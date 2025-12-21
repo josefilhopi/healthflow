@@ -12,10 +12,20 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Users, Plus, Pencil, Trash2, Search } from "lucide-react";
+import { Users, Plus, Pencil, Trash2, Search, FileText, ClipboardList, Receipt, ScrollText, CheckCircle2, XCircle, ShieldCheck, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ImageInput } from "@/components/ImageInput";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface Paciente {
   id: string;
@@ -24,7 +34,13 @@ interface Paciente {
   telefone: string;
   email: string;
   dataNascimento: string;
+  sexo: "Masculino" | "Feminino" | "Outro";
+  verificado: boolean;
   avatar?: string;
+  laudos: any[];
+  prescricoes: any[];
+  anamneses: any[];
+  receitas: any[];
 }
 
 const initialPacientes: Paciente[] = [
@@ -35,7 +51,10 @@ const initialPacientes: Paciente[] = [
     telefone: "(11) 98888-0001",
     email: "maria@email.com",
     dataNascimento: "1985-03-15",
+    sexo: "Feminino",
+    verificado: true,
     avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Maria%20Silva",
+    laudos: [], prescricoes: [], anamneses: [], receitas: []
   },
   {
     id: "2",
@@ -44,7 +63,10 @@ const initialPacientes: Paciente[] = [
     telefone: "(11) 98888-0002",
     email: "joao@email.com",
     dataNascimento: "1990-07-22",
+    sexo: "Masculino",
+    verificado: false,
     avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Joao%20Santos",
+    laudos: [], prescricoes: [], anamneses: [], receitas: []
   },
   {
     id: "3",
@@ -53,7 +75,10 @@ const initialPacientes: Paciente[] = [
     telefone: "(11) 98888-0003",
     email: "ana@email.com",
     dataNascimento: "1978-11-08",
+    sexo: "Feminino",
+    verificado: true,
     avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Ana%20Costa",
+    laudos: [], prescricoes: [], anamneses: [], receitas: []
   },
 ];
 
@@ -68,7 +93,13 @@ export default function Pacientes() {
     telefone: "",
     email: "",
     dataNascimento: "",
+    sexo: "Masculino" as "Masculino" | "Feminino" | "Outro",
+    verificado: false,
     avatar: "",
+    laudos: [] as any[],
+    prescricoes: [] as any[],
+    anamneses: [] as any[],
+    receitas: [] as any[],
   });
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [searchTerm, setSearchTerm] = useState(""); // Novo estado para o termo de busca
@@ -82,11 +113,30 @@ export default function Pacientes() {
         telefone: paciente.telefone,
         email: paciente.email,
         dataNascimento: paciente.dataNascimento,
+        sexo: paciente.sexo,
+        verificado: paciente.verificado,
         avatar: paciente.avatar || "",
+        laudos: paciente.laudos || [],
+        prescricoes: paciente.prescricoes || [],
+        anamneses: paciente.anamneses || [],
+        receitas: paciente.receitas || [],
       });
     } else {
       setEditingPaciente(null);
-      setFormData({ nome: "", cpf: "", telefone: "", email: "", dataNascimento: "", avatar: "" });
+      setFormData({ 
+        nome: "", 
+        cpf: "", 
+        telefone: "", 
+        email: "", 
+        dataNascimento: "", 
+        sexo: "Masculino", 
+        verificado: false, 
+        avatar: "",
+        laudos: [],
+        prescricoes: [],
+        anamneses: [],
+        receitas: []
+      });
     }
     setAvatarFile(null); // Reset avatar file
     setIsModalOpen(true);
@@ -95,7 +145,20 @@ export default function Pacientes() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingPaciente(null);
-    setFormData({ nome: "", cpf: "", telefone: "", email: "", dataNascimento: "", avatar: "" });
+    setFormData({ 
+      nome: "", 
+      cpf: "", 
+      telefone: "", 
+      email: "", 
+      dataNascimento: "", 
+      sexo: "Masculino", 
+      verificado: false, 
+      avatar: "",
+      laudos: [],
+      prescricoes: [],
+      anamneses: [],
+      receitas: []
+    });
     setAvatarFile(null);
   };
 
@@ -183,6 +246,19 @@ export default function Pacientes() {
     { key: "telefone" as const, label: "Telefone" },
     { key: "email" as const, label: "E-mail" },
     {
+      key: "verificado",
+      label: "Status",
+      render: (paciente: Paciente) => (
+        <Badge variant={paciente.verificado ? "default" : "secondary"} className={cn(
+          "gap-1 rounded-lg px-2",
+          paciente.verificado ? "bg-green-100 text-green-700 hover:bg-green-100" : "bg-slate-100 text-slate-500 hover:bg-slate-100"
+        )}>
+          {paciente.verificado ? <ShieldCheck className="h-3 w-3" /> : <ShieldAlert className="h-3 w-3" />}
+          {paciente.verificado ? "Verificado" : "Pendente"}
+        </Badge>
+      ),
+    },
+    {
       key: "actions",
       label: "Ações",
       render: (paciente: Paciente) => (
@@ -261,75 +337,185 @@ export default function Pacientes() {
               </DialogHeader>
             </div>
 
-            <div className="p-8">
-              <div className="space-y-6">
-                <div className="flex justify-center mb-4">
-                  <ImageInput
-                    label="Foto do Paciente"
-                    currentImage={formData.avatar}
-                    onImageChange={setAvatarFile}
-                    fallbackText={getInitials(formData.nome || "Paciente")}
-                  />
+            <div className="p-0">
+              <Tabs defaultValue="cadastro" className="w-full">
+                <div className="px-8 bg-white/50 border-b border-border/50">
+                  <TabsList className="h-14 bg-transparent gap-8 p-0">
+                    <TabsTrigger value="cadastro" className="h-14 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 font-black uppercase tracking-widest text-[10px] text-muted-foreground data-[state=active]:text-primary transition-all">
+                      Dados Básicos
+                    </TabsTrigger>
+                    <TabsTrigger value="prontuario" className="h-14 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 font-black uppercase tracking-widest text-[10px] text-muted-foreground data-[state=active]:text-primary transition-all">
+                      Prontuário
+                    </TabsTrigger>
+                  </TabsList>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="nome" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Nome completo *</Label>
-                    <Input
-                      id="nome"
-                      placeholder="Ex: Maria Oliveira Silva"
-                      className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6 text-base rounded-2xl text-slate-900 placeholder:text-slate-500"
-                      value={formData.nome}
-                      onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="cpf" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">CPF *</Label>
-                    <Input
-                      id="cpf"
-                      placeholder="000.000.000-00"
-                      className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6 rounded-2xl text-slate-900 placeholder:text-slate-500"
-                      value={formData.cpf}
-                      onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="dataNascimento" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Data de Nascimento</Label>
-                    <Input
-                      id="dataNascimento"
-                      type="date"
-                      className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6 rounded-2xl text-slate-900 placeholder:text-slate-500"
-                      value={formData.dataNascimento}
-                      onChange={(e) => setFormData({ ...formData, dataNascimento: e.target.value })}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="telefone" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Telefone</Label>
-                    <Input
-                      id="telefone"
-                      placeholder="(00) 00000-0000"
-                      className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6 rounded-2xl"
-                      value={formData.telefone}
-                      onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">E-mail</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="paciente@exemplo.com"
-                      className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6 rounded-2xl"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    />
-                  </div>
+                <div className="p-8">
+                  <TabsContent value="cadastro" className="mt-0 space-y-6">
+                    <div className="flex justify-center mb-8">
+                      <ImageInput
+                        label="Foto do Paciente"
+                        currentImage={formData.avatar}
+                        onImageChange={setAvatarFile}
+                        fallbackText={getInitials(formData.nome || "Paciente")}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="nome" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Nome completo *</Label>
+                        <Input
+                          id="nome"
+                          placeholder="Ex: Maria Oliveira Silva"
+                          className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6 text-base rounded-2xl text-slate-900 placeholder:text-slate-500"
+                          value={formData.nome}
+                          onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="cpf" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">CPF *</Label>
+                        <Input
+                          id="cpf"
+                          placeholder="000.000.000-00"
+                          className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6 rounded-2xl text-slate-900 placeholder:text-slate-500"
+                          value={formData.cpf}
+                          onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="dataNascimento" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Data de Nascimento</Label>
+                        <Input
+                          id="dataNascimento"
+                          type="date"
+                          className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6 rounded-2xl text-slate-900 placeholder:text-slate-500"
+                          value={formData.dataNascimento}
+                          onChange={(e) => setFormData({ ...formData, dataNascimento: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Sexo</Label>
+                        <Select 
+                          value={formData.sexo} 
+                          onValueChange={(value: any) => setFormData({ ...formData, sexo: value })}
+                        >
+                          <SelectTrigger className="bg-white/50 border-white/50 focus:bg-white h-12 rounded-2xl text-slate-900">
+                            <SelectValue placeholder="Selecione o sexo" className="text-slate-900" />
+                          </SelectTrigger>
+                          <SelectContent className="glass border-white/20">
+                            <SelectItem value="Masculino">Masculino</SelectItem>
+                            <SelectItem value="Feminino">Feminino</SelectItem>
+                            <SelectItem value="Outro">Outro</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Verificado</Label>
+                        <Select 
+                          value={formData.verificado ? "Sim" : "Não"} 
+                          onValueChange={(value) => setFormData({ ...formData, verificado: value === "Sim" })}
+                        >
+                          <SelectTrigger className="bg-white/50 border-white/50 focus:bg-white h-12 rounded-2xl text-slate-900">
+                            <SelectValue placeholder="Status de verificação" className="text-slate-900" />
+                          </SelectTrigger>
+                          <SelectContent className="glass border-white/20">
+                            <SelectItem value="Sim">Sim (Documentado)</SelectItem>
+                            <SelectItem value="Não">Não (Pendente)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="telefone" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Telefone</Label>
+                        <Input
+                          id="telefone"
+                          placeholder="(00) 00000-0000"
+                          className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6 rounded-2xl text-slate-900 placeholder:text-slate-500"
+                          value={formData.telefone}
+                          onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">E-mail</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="paciente@exemplo.com"
+                          className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6 rounded-2xl text-slate-900 placeholder:text-slate-500"
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="prontuario" className="mt-0">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="p-6 bg-primary/5 border border-primary/10 rounded-3xl hover:bg-primary/10 transition-all cursor-pointer group">
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600">
+                            <FileText className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Laudos e Exames</h4>
+                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">0 Documentos encontrados</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="p-6 bg-orange-50 border border-orange-100 rounded-3xl hover:bg-orange-100/50 transition-all cursor-pointer group">
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600">
+                            <Receipt className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Prescrições</h4>
+                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">0 Itens registrados</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="p-6 bg-emerald-50 border border-emerald-100 rounded-3xl hover:bg-emerald-100/50 transition-all cursor-pointer group">
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-600">
+                            <ClipboardList className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Anamneses</h4>
+                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">0 Históricos disponíveis</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="p-6 bg-purple-50 border border-purple-100 rounded-3xl hover:bg-purple-100/50 transition-all cursor-pointer group">
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-600">
+                            <ScrollText className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Receitas</h4>
+                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">0 Guias emitidas</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-8 p-12 text-center bg-white/30 rounded-[2.5rem] border-2 border-dashed border-white/50">
+                      <div className="h-20 w-20 rounded-[2rem] bg-slate-100 flex items-center justify-center mx-auto mb-6">
+                        <Users className="h-10 w-10 text-muted-foreground/30" />
+                      </div>
+                      <h5 className="text-lg font-black text-slate-800 mb-2">Prontuário Vazio</h5>
+                      <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                        Os dados clínicos serão preenchidos automaticamente durante os atendimentos médicos no consultório.
+                      </p>
+                    </div>
+                  </TabsContent>
                 </div>
-              </div>
+              </Tabs>
             </div>
 
             <div className="p-8 bg-secondary/30 flex justify-end gap-4 border-t border-border/50">

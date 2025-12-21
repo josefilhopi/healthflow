@@ -11,8 +11,9 @@ import PlanosSaude from "./pages/PlanosSaude";
 import Procedimentos from "./pages/Procedimentos";
 import Agendamentos from "./pages/Agendamentos";
 import NotFound from "./pages/NotFound";
-import LoginPage from "./pages/LoginPage"; // Importar a nova página de login
-import { AuthProvider, useAuth } from "./hooks/use-auth"; // Importar AuthProvider e useAuth
+import LoginPage from "./pages/LoginPage";
+import Especialidades from "./pages/Especialidades";
+import { AuthProvider, useAuth } from "./hooks/use-auth";
 import React from "react"; // Importar React para React.FC
 
 const queryClient = new QueryClient();
@@ -34,8 +35,9 @@ const AppContent = () => {
       
       {/* Rotas protegidas */}
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-      <Route path="/medicos" element={<ProtectedRoute><Medicos /></ProtectedRoute>} />
-      <Route path="/pacientes" element={<ProtectedRoute><Pacientes /></ProtectedRoute>} />
+       <Route path="/medicos" element={<ProtectedRoute><Medicos /></ProtectedRoute>} />
+       <Route path="/especialidades" element={<ProtectedRoute><Especialidades /></ProtectedRoute>} />
+       <Route path="/pacientes" element={<ProtectedRoute><Pacientes /></ProtectedRoute>} />
       <Route path="/planos-saude" element={<ProtectedRoute><PlanosSaude /></ProtectedRoute>} />
       <Route path="/procedimentos" element={<ProtectedRoute><Procedimentos /></ProtectedRoute>} />
       <Route path="/agendamentos" element={<ProtectedRoute><Agendamentos /></ProtectedRoute>} />

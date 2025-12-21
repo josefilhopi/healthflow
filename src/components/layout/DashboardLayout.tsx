@@ -9,7 +9,8 @@ import {
   Menu,
   X,
   LogOut,
-  ClipboardList
+  ClipboardList,
+  Award
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth"; // Importar useAuth
@@ -18,6 +19,7 @@ const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: Users, label: "Pacientes", href: "/pacientes" },
   { icon: Stethoscope, label: "Médicos", href: "/medicos" },
+  { icon: Award, label: "Especialidades", href: "/especialidades" },
   { icon: FileText, label: "Planos de Saúde", href: "/planos-saude" },
   { icon: ClipboardList, label: "Procedimentos", href: "/procedimentos" },
   { icon: Calendar, label: "Agendamentos", href: "/agendamentos" },

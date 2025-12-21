@@ -1,5 +1,7 @@
 # Bem-vindo ao seu projeto Lovable
 
+# feito no antigravity do usuário suporte@achemed.com
+
 ## Informações do Projeto
 
 **URL**: https://lovable.dev/projects/SUBSTITUA_PELO_ID_DO_PROJETO
