@@ -29,21 +29,21 @@ export function DataTable<T extends { id: string }>({
 }: DataTableProps<T>) {
   if (isLoading) {
     return (
-      <div className="bg-card rounded-xl shadow-card overflow-hidden">
+      <div className="glass rounded-[2rem] shadow-card overflow-hidden border-white/40">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-primary/5">
             <TableRow>
               {columns.map((column) => (
-                <TableHead key={String(column.key)}>{column.label}</TableHead>
+                <TableHead key={String(column.key)} className="h-16 px-6 uppercase text-[10px] tracking-widest font-black">{column.label}</TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
             {[...Array(5)].map((_, i) => (
-              <TableRow key={i}>
+              <TableRow key={i} className="border-b border-border/30 last:border-0">
                 {columns.map((column) => (
-                  <TableCell key={String(column.key)}>
-                    <Skeleton className="h-4 w-full max-w-[200px]" />
+                  <TableCell key={String(column.key)} className="px-6 py-6">
+                    <Skeleton className="h-5 w-full max-w-[150px] bg-primary/5 rounded-full" />
                   </TableCell>
                 ))}
               </TableRow>
@@ -59,13 +59,13 @@ export function DataTable<T extends { id: string }>({
   }
 
   return (
-    <div className="bg-card rounded-xl shadow-card overflow-hidden">
+    <div className="glass rounded-[2rem] shadow-2xl border-white/40 overflow-hidden">
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader>
-            <TableRow>
+          <TableHeader className="bg-primary/5">
+            <TableRow className="hover:bg-transparent border-b border-border/50">
               {columns.map((column) => (
-                <TableHead key={String(column.key)} className="font-semibold">
+                <TableHead key={String(column.key)} className="font-extrabold text-foreground h-16 px-6 uppercase text-[10px] tracking-widest">
                   {column.label}
                 </TableHead>
               ))}
@@ -73,9 +73,9 @@ export function DataTable<T extends { id: string }>({
           </TableHeader>
           <TableBody>
             {data.map((item) => (
-              <TableRow key={item.id} className="hover:bg-secondary/50 transition-colors">
+              <TableRow key={item.id} className="hover:bg-primary/5 transition-all duration-300 border-b border-border/30 last:border-0 group">
                 {columns.map((column) => (
-                  <TableCell key={String(column.key)}>
+                  <TableCell key={String(column.key)} className="px-6 py-6 text-sm font-medium text-muted-foreground group-hover:text-foreground">
                     {column.render
                       ? column.render(item)
                       : String(item[column.key as keyof T] || "")}

@@ -249,74 +249,97 @@ export default function Pacientes() {
         />
 
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                {editingPaciente ? "Editar Paciente" : "Novo Paciente"}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <ImageInput
-                label="Foto do Paciente"
-                currentImage={formData.avatar}
-                onImageChange={setAvatarFile}
-                fallbackText={getInitials(formData.nome || "Paciente")}
-              />
-              <div className="space-y-2">
-                <Label htmlFor="nome">Nome completo *</Label>
-                <Input
-                  id="nome"
-                  placeholder="Nome completo"
-                  value={formData.nome}
-                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cpf">CPF *</Label>
-                <Input
-                  id="cpf"
-                  placeholder="000.000.000-00"
-                  value={formData.cpf}
-                  onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="dataNascimento">Data de Nascimento</Label>
-                <Input
-                  id="dataNascimento"
-                  type="date"
-                  value={formData.dataNascimento}
-                  onChange={(e) => setFormData({ ...formData, dataNascimento: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="telefone">Telefone</Label>
-                <Input
-                  id="telefone"
-                  placeholder="(00) 00000-0000"
-                  value={formData.telefone}
-                  onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">E-mail</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="E-mail"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                />
+          <DialogContent className="sm:max-w-xl max-h-[95vh] overflow-y-auto glass border-white/40 shadow-2xl rounded-[2.5rem] p-0 overflow-hidden">
+            <div className="bg-primary/5 p-8 border-b border-border/50">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-black tracking-tight text-gradient">
+                  {editingPaciente ? "Editar Paciente" : "Novo Paciente"}
+                </DialogTitle>
+                <p className="text-sm text-muted-foreground font-medium mt-1">
+                  Preencha os campos abaixo para concluir o cadastro.
+                </p>
+              </DialogHeader>
+            </div>
+
+            <div className="p-8">
+              <div className="space-y-6">
+                <div className="flex justify-center mb-4">
+                  <ImageInput
+                    label="Foto do Paciente"
+                    currentImage={formData.avatar}
+                    onImageChange={setAvatarFile}
+                    fallbackText={getInitials(formData.nome || "Paciente")}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="nome" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Nome completo *</Label>
+                    <Input
+                      id="nome"
+                      placeholder="Ex: Maria Oliveira Silva"
+                      className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6 text-base rounded-2xl text-slate-900 placeholder:text-slate-500"
+                      value={formData.nome}
+                      onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="cpf" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">CPF *</Label>
+                    <Input
+                      id="cpf"
+                      placeholder="000.000.000-00"
+                      className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6 rounded-2xl text-slate-900 placeholder:text-slate-500"
+                      value={formData.cpf}
+                      onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="dataNascimento" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Data de Nascimento</Label>
+                    <Input
+                      id="dataNascimento"
+                      type="date"
+                      className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6 rounded-2xl text-slate-900 placeholder:text-slate-500"
+                      value={formData.dataNascimento}
+                      onChange={(e) => setFormData({ ...formData, dataNascimento: e.target.value })}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="telefone" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Telefone</Label>
+                    <Input
+                      id="telefone"
+                      placeholder="(00) 00000-0000"
+                      className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6 rounded-2xl"
+                      value={formData.telefone}
+                      onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">E-mail</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="paciente@exemplo.com"
+                      className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6 rounded-2xl"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-            <DialogFooter>
-              <Button variant="ghost" onClick={handleCloseModal}>
+
+            <div className="p-8 bg-secondary/30 flex justify-end gap-4 border-t border-border/50">
+              <Button variant="ghost" onClick={handleCloseModal} className="font-bold text-slate-600 hover:bg-white hover:text-slate-900 rounded-2xl h-12 px-6">
                 Cancelar
               </Button>
-              <Button onClick={handleSave} disabled={isLoading}>
-                {isLoading ? "Salvando..." : "Salvar"}
+              <Button onClick={handleSave} disabled={isLoading} className="font-black h-12 px-8 rounded-2xl shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all duration-300">
+                {isLoading ? "Salvando..." : "Finalizar Cadastro"}
               </Button>
-            </DialogFooter>
+            </div>
           </DialogContent>
         </Dialog>
       </div>

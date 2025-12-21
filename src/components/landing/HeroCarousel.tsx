@@ -56,16 +56,18 @@ export function HeroCarousel() {
                 />
 
                 {/* overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
                 {/* texto */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
-                  <h3 className="text-xl sm:text-2xl font-semibold text-white">
-                    {slide.title}
-                  </h3>
-                  <p className="mt-1 text-white/85 max-w-xl">
-                    {slide.subtitle}
-                  </p>
+                <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-12">
+                  <div className="glass p-6 sm:p-8 rounded-2xl w-fit max-w-2xl backdrop-blur-lg bg-black/30 border-white/10">
+                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight">
+                      {slide.title}
+                    </h3>
+                    <p className="mt-3 text-lg text-white/90 leading-relaxed">
+                      {slide.subtitle}
+                    </p>
+                  </div>
                 </div>
               </div>
             </CarouselItem>

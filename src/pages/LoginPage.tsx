@@ -49,17 +49,23 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md rounded-xl bg-card p-8 shadow-modal animate-fade-in">
-        <div className="text-center mb-8">
-          <Link to="/" className="text-3xl font-bold text-primary">
-            HealthManager
+    <div className="flex min-h-screen items-center justify-center p-4 relative overflow-hidden mesh-gradient">
+      {/* Adornos decorativos animados */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-40">
+        <div className="absolute top-[20%] left-[15%] w-72 h-72 bg-primary/30 rounded-full blur-[100px] animate-pulse" />
+        <div className="absolute bottom-[20%] right-[15%] w-96 h-96 bg-blue-400/20 rounded-full blur-[100px] animate-pulse delay-1000" />
+      </div>
+
+      <div className="w-full max-w-md glass p-10 rounded-[2rem] shadow-2xl relative z-10 animate-scale-in border-white/40">
+        <div className="text-center mb-10">
+          <Link to="/" className="text-4xl font-extrabold tracking-tighter text-gradient">
+            HealthFlow
           </Link>
-          <h2 className="mt-4 text-2xl font-bold text-foreground">
-            Acesse sua conta
+          <h2 className="mt-6 text-2xl font-bold text-foreground">
+            Bem-vindo de volta
           </h2>
-          <p className="text-muted-foreground mt-2">
-            Insira suas credenciais para continuar
+          <p className="text-muted-foreground mt-2 font-medium">
+            Acesse sua conta para continuar a gestão
           </p>
         </div>
 
@@ -69,10 +75,14 @@ export default function LoginPage() {
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>E-mail</FormLabel>
+                <FormItem className="space-y-1.5">
+                  <FormLabel className="text-sm font-semibold text-foreground/70">E-mail corporativo</FormLabel>
                   <FormControl>
-                    <Input placeholder="seu@email.com" {...field} />
+                    <Input 
+                      placeholder="nome@clinica.com" 
+                      className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6" 
+                      {...field} 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -82,32 +92,43 @@ export default function LoginPage() {
               control={form.control}
               name="password"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Senha</FormLabel>
+                <FormItem className="space-y-1.5">
+                  <FormLabel className="text-sm font-semibold text-foreground/70">Senha de acesso</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input 
+                      type="password" 
+                      placeholder="••••••••" 
+                      className="bg-white/50 border-white/50 focus:bg-white transition-all duration-300 py-6"
+                      {...field} 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? "Entrando..." : (
+            <Button 
+              type="submit" 
+              className="w-full py-7 text-lg font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all duration-300" 
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? "Autenticando..." : (
                 <>
-                  <LogIn className="h-4 w-4 mr-2" />
-                  Entrar
+                  <LogIn className="h-5 w-5 mr-2" />
+                  Entrar no Sistema
                 </>
               )}
             </Button>
           </form>
         </Form>
 
-        <p className="mt-8 text-center text-sm text-muted-foreground">
-          Não tem uma conta?{" "}
-          <Link to="#" className="text-primary hover:underline">
-            Fale conosco
-          </Link>
-        </p>
+        <div className="mt-10 text-center">
+          <p className="text-sm text-muted-foreground font-medium">
+            Novo por aqui?{" "}
+            <Link to="#" className="text-primary font-bold hover:underline underline-offset-4">
+              Solicite acesso agora
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
